@@ -7,6 +7,10 @@ class UserSerializer(serializers.ModelSerializer): # creo un serializer para rec
     username = serializers.CharField() #declaro que recibire un username
     password = serializers.CharField() #declaro que recibire un password
 
+    class Meta:
+        model = Usuario #indico el modelo a usar
+        fields = ['username', 'password'] #indico los campos a recibir
+        
     def validate(self, data): #hago una funcion para validar los datos
         username=data.get('username') 
         password=data.get('password')

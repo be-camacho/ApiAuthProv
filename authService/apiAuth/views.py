@@ -4,12 +4,13 @@ from rest_framework.response import Response
 from .serializers import UserSerializer as US
 
 class UserViewSet(viewsets.ModelViewSet):
+    serializer_class = US
     @action(detail=False, methods=['post'], url_path='auth')
     def auth(self, request):
-        serializer = US(data=request.data)
+        serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():
             return Response(serializer.validated_data, status=200)
         
-        return Response(serializer.errors, status=400)
+        return Response(serializer.errors, status=400)  
 # Create your views here.
