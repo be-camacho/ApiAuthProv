@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.hashers import check_password # Importo la funcion check_password para verificar la contraseña con hash
-from .models import User
+from .models import Usuario
 
 
 class UserSerializer(serializers.ModelSerializer): # creo un serializer para recibir los datos a consultar en la base de datos
@@ -11,8 +11,8 @@ class UserSerializer(serializers.ModelSerializer): # creo un serializer para rec
         username=data.get('username') 
         password=data.get('password')
         try: #intento obtener el usuario de la base de datos
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
+            user = Usuario.objects.get(username=username)
+        except Usuario.DoesNotExist:
             raise serializers.ValidationError("Usuario o contraseña incorrectos")
         if not check_password(password, user.password): #se usa una if not para verificar si la contraseña no es correcta devido a que la contraseña se guarda en hash
             raise serializers.ValidationError("Usuario o contraseña incorrectos")
