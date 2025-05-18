@@ -1,16 +1,30 @@
-from rest_framework import viewsets
-from rest_framework.decorators import action
+from django.contrib.auth.hashers import check_password
+from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import UserSerializer as US
+from rest_framework import status
+from .models import Usuario
 
-class UserViewSet(viewsets.ModelViewSet):
-    serializer_class = US
-    @action(detail=False, methods=['post'], url_path='auth')
-    def auth(self, request):
-        serializer = self.get_serializer(data=request.data)
+class LoginView(APIView):
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        try:
+            user = Usuario.objects.get(username=username)
+        except Usuario.DoesNotExist:
+            return Response(
+                {"error": "Credenciales incorrectas"},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        if not check_password(password, user.password):
+            return Response(
+                {"error": "Credenciales inválidas"},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        response_data = {
+            "rol": user.rol,
+        }
 
-        if serializer.is_valid():
-            return Response(serializer.validated_data, status=200)
-        
-        return Response(serializer.errors, status=400)  
-# Create your views here.
+        if user.rol == 'p':
+            response_data["id_proveedor"] = user.idproveedor
+
+        return Response(response_data, status=status.HTTP_200_OK)
