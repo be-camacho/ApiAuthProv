@@ -38,12 +38,12 @@ jobs:
             sudo docker rmi -f $(sudo docker images -q apiauthprovs) || true
           fi
           sudo docker system prune -f
-          sudo lsof -ti :80 | xargs -r sudo kill -9 || true
+          sudo lsof -ti :81 | xargs -r sudo kill -9 || true
           sudo docker build --no-cache -t apiauthprovs .
           sudo docker run -d \
             --name apiauthprovs_container \
             --restart unless-stopped \
-            -p 80:8000 \
+            -p 81:8000 \
             --env-file .env \
             apiauthprovs
           
